@@ -1,15 +1,29 @@
+import * as traits from '../traits/index.js';
+
 export default class Composy extends HTMLElement {
-	#shadowRoot;
+	shadowRoot;
+	#composingClass;
 
 	constructor() {
 		super();
-		this.#shadowRoot = this.attachShadow({mode: 'open'});
+		this.shadowRoot = this.attachShadow({mode: 'open'});
+		this.#composingClass = new.target;
 	}
 
 	async connectedCallback() {
-		const composingClass = this.constructor.name;
-		const componentPaths = this.#getComponentPath(composingClass);
-		this.#shadowRoot.innerHTML = await this.#getPageContent(componentPaths);
+		const componentPaths = this.#getComponentPath(this.#composingClass.name);
+		this.shadowRoot.innerHTML = await this.#getPageContent(componentPaths);
+		this.connected();
+	}
+
+	connected() {
+		// Dummy implementation of connected.
+		// Used whenever a child class wants to do something when connectedCallback triggers.
+		// Maybe I should do this for all functions or do I need to? For consistency?
+	}
+
+	hasTrait(name) {
+		Object.assign(this.#composingClass.prototype, traits[name]);
 	}
 
 	async #getPageContent(componentPaths) {
