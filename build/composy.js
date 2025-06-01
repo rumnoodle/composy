@@ -1,3 +1,4 @@
+const traits = {};
 traits.events = {
 	dispatch: (eventName, data = {}) => {
 		const options = data ? { detail: data } : undefined;
@@ -29,12 +30,11 @@ export class Composy extends HTMLElement {
 		Object.assign(this.#composingClass.prototype, traits[name]);
 	}
 }
-import Composy from '../composy.js';
 
-export default class Log extends Composy {
+export class Log extends Composy {
 	constructor() {
 		super();
-		this.shadowRoot = `<div id="log">
+		this.shadowRoot.innerHTML = `<div id="log">
 	<div id="log-scroll"></div>
 </div>
 

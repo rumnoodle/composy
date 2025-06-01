@@ -82,16 +82,18 @@ const getComponentContent = (paths) => {
 		const cssFilePath = p.replace('.js', '.css');
 		const cssContent = fs.readFileSync(cssFilePath, 'utf8');
 		const htmlFilePath = p.replace('.js', '.html');
-		const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-		const shadowRootContent = `\t\tthis.shadowRoot = \`${htmlContent}\n<style>\n${cssContent}\n</style>\``;
+		const htmlContent = fs.readFileSync(htmlFilePath, 'utf8')
+		const shadowRootContent = `\t\tthis.shadowRoot.innerHTML = \`${htmlContent}\n<style>\n${cssContent}\n</style>\``;
 
-		const component = fs.readFileSync(p, 'utf8');
-		const lines = component.split('\n');
-		const index = lines.findIndex((l) => l.includes('super();'));
+		const component = fs.readFileSync(p, 'utf8')
+			.split('\n')
+			.filter((l) => !l.startsWith('import'))
+			.map((l) => l.replace('export default', 'export'));
+		const index = component.findIndex((l) => l.includes('super();'));
 		// add shadowRoot after super() call
-		lines.splice(index + 1, 0, shadowRootContent);
+		component.splice(index + 1, 0, shadowRootContent);
 
-		content += `${lines.join('\n')}\n`;
+		content += `${component.join('\n')}\n`;
 	}
 
 	return content;
@@ -103,7 +105,8 @@ const getComponentContent = (paths) => {
 const addTraitsToOutput = (traits) => {
 	let traitsCode = 'const traits = {};\n';
 	const replaceStart = new RegExp('^export const ');
-	return traits.map((trait) => trait.replace(replaceStart, 'traits.').trimEnd().concat(';')).join('\n');
+	traitsCode += traits.map((trait) => trait.replace(replaceStart, 'traits.').trimEnd().concat(';')).join('\n');
+	return traitsCode;
 }
 
 
@@ -144,7 +147,7 @@ const componentExportPaths = parseExportFilePaths(componentImports.join('\n'));
 // Here we need to fetch and assemble every component, put the html and css in the class
 const componentCode = getComponentContent(componentExportPaths);
 output += componentCode;
-console.log(output);
+// console.log(output);
 
 makeBuildDirectory();
 fs.writeFile('build/composy.js', output, (err) => { if (err) throw err; });
