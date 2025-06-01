@@ -1,8 +1,5 @@
-import Composy from './components/composy.js';
+// Add all components that should be exported here, otherwise they won't be included in build script
 
-import Log from './components/log/log.js';
+export * from './components/composy.js';
+export * from './components/log/log.js';
 
-export {
-	Composy,
-	Log
-};

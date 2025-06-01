@@ -1,21 +1,12 @@
-const body = document.body;
+export const events = {
+	dispatch: (eventName, data = {}) => {
+		const options = data ? { detail: data } : undefined;
+		const newEvent = new CustomEvent(eventName, options);
+		document.body.dispatchEvent(newEvent);
+	},
 
-const dispatch = (eventName, data = {}) => {
-	const options = data ? { detail: data } : undefined;
-	const newEvent = new CustomEvent(eventName, options);
-	body.dispatchEvent(newEvent);
-};
-
-const listen = (eventName, callback) => {
-	body.addEventListener(eventName, callback);
+	listen: (eventName, callback) => {
+		document.body.addEventListener(eventName, callback);
+	}
 }
 
-
-const events = {
-	dispatch,
-	listen
-};
-
-export {
-	events
-};

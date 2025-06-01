@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Log Demo</title>
+		<script type="module" src="./log.js"></script>
+	</head>
+
+	<body>
+		<h1>Log Demo</h1>
+		<p>Demo of the log component in Composy. A new message will appear every second in the log below.</p>
+		<log-y></log-y>
+		<script>
+			let counter = 1;
+			const inte = setInterval(() => {
+				const ce = new CustomEvent('log-message', {
+					detail: {
+						message: `This is message number ${counter}. What happens when message is too wide to fit into log screen? I want a horizontal scroll as well in that case or the option to wrap or do ellipsis, possibly with tooltips or something for entire message.`
+					}
+				});
+				counter += 1;
+				document.body.dispatchEvent(ce);
+				if (counter > 30) {
+					clearInterval(inte);
+				}
+			}, 500);
+		</script>
+	</body>
+</html>
