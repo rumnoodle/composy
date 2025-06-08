@@ -15,6 +15,16 @@ export default class Float extends Composy {
 		const content = this.innerHTML;
 		const contentDiv = this.shadowRoot.getElementById('content');
 		contentDiv.innerHTML = content;
+
+		const floatDiv = this.shadowRoot.getElementById('float');
+		floatDiv.addEventListener('mouseenter', (e) => {
+			const headerDiv = this.shadowRoot.getElementById('header');
+			headerDiv.classList.remove('hidden');
+		});
+		floatDiv.addEventListener('mouseleave', (e) => {
+			const headerDiv = this.shadowRoot.getElementById('header');
+			headerDiv.classList.add('hidden');
+		});
 	}
 }
 
