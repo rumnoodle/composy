@@ -9,7 +9,6 @@ import Composy from '../composy.js';
 export default class Float extends Composy {
 	#startingPosCursor;
 	#startingPosHost;
-	#mouseMoveHandler;
 
 	constructor() {
 		super();
@@ -21,41 +20,72 @@ export default class Float extends Composy {
 		contentDiv.innerHTML = content;
 
 		const floatDiv = this.shadowRoot.getElementById('float');
+
+		// Show header when entering element
 		floatDiv.addEventListener('mouseenter', (e) => {
 			const headerDiv = this.shadowRoot.getElementById('header');
 			headerDiv.classList.remove('hidden');
 		});
+
+		// Hide header when leaving element
 		floatDiv.addEventListener('mouseleave', (e) => {
 			const headerDiv = this.shadowRoot.getElementById('header');
 			headerDiv.classList.add('hidden');
 		});
 
+		// Move element when holding down move button
 		const moveButton = this.shadowRoot.getElementById('drag-and-drop');
-		const moveFloat = this.moveFloat.bind(this);
+		// We bind to a local variable to be able to remove listener
+		const moveFloat = this.#moveFloat.bind(this);
+
 		moveButton.addEventListener('mousedown', (e) => {
-			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
 			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
 			this.#startingPosHost = { x: targetBoundingRect.left, y: targetBoundingRect.top };
+			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
 
-			this.#mouseMoveHandler = window.addEventListener('mousemove', moveFloat);
+			window.addEventListener('mousemove', moveFloat);
 		});
+
 		moveButton.addEventListener('mouseup', (e) => {
-			console.log("should remove event listener now");
 			window.removeEventListener('mousemove', moveFloat);
 		});
 
+		// Close element and remove it from the dom
 		const closeButton = this.shadowRoot.getElementById('close');
 		closeButton.addEventListener('click', (e) => {
 			this.shadowRoot.host.remove();
 		});
 
+		// Move element to top so that it's always visible
+		// We don't really care if there are gaps in z-index as long as this is highest
 		const topButton = this.shadowRoot.getElementById('move-to-top');
+		topButton.addEventListener('click', (e) => {
+			this.shadowRoot.host.style.zIndex = this.#findHighestZIndex() + 1;
+		});
 	}
 
-	moveFloat(e) {
+	#moveFloat(e) {
 		const hostElement = this.shadowRoot.host;
 		hostElement.style.top = `${this.#startingPosHost.y + (e.clientY - this.#startingPosCursor.y)}px`;
 		hostElement.style.left = `${this.#startingPosHost.x + (e.clientX - this.#startingPosCursor.x)}px`;
+	}
+
+	#findHighestZIndex() {
+		let currentZIndex = 0;
+		const selector = 'body *';
+		const elements = Array.from(document.querySelectorAll(selector));
+		const highestZIndex = elements.reduce((highest, currentElement) => {
+			const cssStyles = getComputedStyle(currentElement);
+			if (cssStyles.getPropertyValue('position') === 'static') {
+				return highest;
+			}
+
+			const cssZIndex = parseInt(cssStyles.getPropertyValue('z-index')) || 0;
+			const inlineZIndex = parseInt(currentElement.style.zIndex) || 0;
+
+			return Math.max(highest, cssZIndex, inlineZIndex);
+		}, 0);
+		return highestZIndex;
 	}
 }
 
