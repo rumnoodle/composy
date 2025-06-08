@@ -7,6 +7,10 @@ import Composy from '../composy.js';
 // * figure out how to do backup values for variables
 // * remove the border from chat, we don't need it if it is to be added to a container
 export default class Float extends Composy {
+	#startingPosCursor;
+	#startingPosHost;
+	#mouseMoveHandler;
+
 	constructor() {
 		super();
 	}
@@ -25,6 +29,33 @@ export default class Float extends Composy {
 			const headerDiv = this.shadowRoot.getElementById('header');
 			headerDiv.classList.add('hidden');
 		});
+
+		const moveButton = this.shadowRoot.getElementById('drag-and-drop');
+		const moveFloat = this.moveFloat.bind(this);
+		moveButton.addEventListener('mousedown', (e) => {
+			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
+			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
+			this.#startingPosHost = { x: targetBoundingRect.left, y: targetBoundingRect.top };
+
+			this.#mouseMoveHandler = window.addEventListener('mousemove', moveFloat);
+		});
+		moveButton.addEventListener('mouseup', (e) => {
+			console.log("should remove event listener now");
+			window.removeEventListener('mousemove', moveFloat);
+		});
+
+		const closeButton = this.shadowRoot.getElementById('close');
+		closeButton.addEventListener('click', (e) => {
+			this.shadowRoot.host.remove();
+		});
+
+		const topButton = this.shadowRoot.getElementById('move-to-top');
+	}
+
+	moveFloat(e) {
+		const hostElement = this.shadowRoot.host;
+		hostElement.style.top = `${this.#startingPosHost.y + (e.clientY - this.#startingPosCursor.y)}px`;
+		hostElement.style.left = `${this.#startingPosHost.x + (e.clientX - this.#startingPosCursor.x)}px`;
 	}
 }
 
