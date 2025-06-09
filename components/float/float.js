@@ -62,6 +62,23 @@ export default class Float extends Composy {
 		topButton.addEventListener('click', (e) => {
 			this.shadowRoot.host.style.zIndex = this.#findHighestZIndex() + 1;
 		});
+
+		// Minimize and maximize
+		const minimizeButton = this.shadowRoot.getElementById('minimize');
+		const maximizeButton = this.shadowRoot.getElementById('maximize');
+		minimizeButton.addEventListener('click', (e) => {
+			minimizeButton.classList.add('hidden');
+			contentDiv.classList.add('hidden');
+			floatDiv.style.height = '48px';
+			maximizeButton.classList.remove('hidden');
+		});
+
+		maximizeButton.addEventListener('click', (e) => {
+			maximizeButton.classList.add('hidden');
+			contentDiv.classList.remove('hidden');
+			floatDiv.style.height = '410px';
+			minimizeButton.classList.remove('hidden');
+		});
 	}
 
 	#moveFloat(e) {
