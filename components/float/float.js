@@ -1,6 +1,8 @@
 import Composy from '../composy.js';
 
 // TODO:
+// * Should be possible to set width and height, also to resize if enabled
+//
 // * create socket trait to communicate with server
 // * create keypress trait to handle keypresses or add to events
 // * move some things out in css variables for consistency and import at start of file
@@ -66,19 +68,25 @@ export default class Float extends Composy {
 		// Minimize and maximize
 		const minimizeButton = this.shadowRoot.getElementById('minimize');
 		const maximizeButton = this.shadowRoot.getElementById('maximize');
+		const minimizedTextField = this.shadowRoot.getElementById('minimized-text');
 		minimizeButton.addEventListener('click', (e) => {
 			minimizeButton.classList.add('hidden');
 			contentDiv.classList.add('hidden');
 			floatDiv.style.height = '48px';
 			maximizeButton.classList.remove('hidden');
+			minimizedTextField.classList.remove('hidden');
 		});
 
 		maximizeButton.addEventListener('click', (e) => {
+			minimizedTextField.classList.add('hidden');
 			maximizeButton.classList.add('hidden');
 			contentDiv.classList.remove('hidden');
 			floatDiv.style.height = '410px';
 			minimizeButton.classList.remove('hidden');
 		});
+
+		const minimizedText = this.getAttribute('minimized-text');
+		minimizedTextField.textContent = minimizedText;
 	}
 
 	#moveFloat(e) {
