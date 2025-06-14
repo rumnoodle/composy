@@ -67,3 +67,19 @@ button:hover {
 #minimize {
 	padding-top: 4px;
 }
+
+#resize-right {
+	cursor: e-resize;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	width: 4px;
+}
+
+#resize-bottom {
+	bottom: 0;
+	cursor: s-resize;
+	height: 4px;
+	position: absolute;
+	width: 100%;
+}

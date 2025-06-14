@@ -69,12 +69,16 @@ export default class Float extends Composy {
 		const minimizeButton = this.shadowRoot.getElementById('minimize');
 		const maximizeButton = this.shadowRoot.getElementById('maximize');
 		const minimizedTextField = this.shadowRoot.getElementById('minimized-text');
+		const resizeHandles = this.shadowRoot.querySelectorAll('.resize-handle');
 		minimizeButton.addEventListener('click', (e) => {
 			minimizeButton.classList.add('hidden');
 			contentDiv.classList.add('hidden');
 			floatDiv.style.height = '48px';
 			maximizeButton.classList.remove('hidden');
 			minimizedTextField.classList.remove('hidden');
+			resizeHandles.forEach((handle) => {
+				handle.classList.add('hidden');
+			});
 		});
 
 		maximizeButton.addEventListener('click', (e) => {
@@ -83,6 +87,9 @@ export default class Float extends Composy {
 			contentDiv.classList.remove('hidden');
 			floatDiv.style.height = '410px';
 			minimizeButton.classList.remove('hidden');
+			resizeHandles.forEach((handle) => {
+				handle.classList.add('hidden');
+			});
 		});
 
 		const minimizedText = this.getAttribute('minimized-text');
