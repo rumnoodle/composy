@@ -88,7 +88,7 @@ export default class Float extends Composy {
 			floatDiv.style.height = '410px';
 			minimizeButton.classList.remove('hidden');
 			resizeHandles.forEach((handle) => {
-				handle.classList.add('hidden');
+				handle.classList.remove('hidden');
 			});
 		});
 
