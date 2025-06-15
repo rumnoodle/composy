@@ -45,6 +45,7 @@ export default class Float extends Composy {
 		const moveFloat = this.#moveFloat.bind(this);
 
 		moveButton.addEventListener('mousedown', (e) => {
+			floatDiv.classList.add('modifying');
 			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
 			this.#startingPosHost = { x: targetBoundingRect.left, y: targetBoundingRect.top };
 			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
@@ -53,6 +54,7 @@ export default class Float extends Composy {
 		});
 
 		moveButton.addEventListener('mouseup', (e) => {
+			floatDiv.classList.remove('modifying');
 			window.removeEventListener('mousemove', moveFloat);
 		});
 
@@ -62,6 +64,7 @@ export default class Float extends Composy {
 		const resizeFloat = this.#resizeFloat.bind(this);
 
 		resizeRightElement.addEventListener('mousedown', (e) => {
+			floatDiv.classList.add('modifying');
 			this.#resizeTriggerElement = resizeRightElement;
 			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
 			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
@@ -73,12 +76,14 @@ export default class Float extends Composy {
 		});
 
 		resizeRightElement.addEventListener('mouseup', (e) => {
+			floatDiv.classList.remove('modifying');
 			window.removeEventListener('mousemove', resizeFloat);
 		});
 
 		const resizeBottomElement = this.shadowRoot.getElementById('resize-bottom');
 
 		resizeBottomElement.addEventListener('mousedown', (e) => {
+			floatDiv.classList.add('modifying');
 			this.#resizeTriggerElement = resizeBottomElement;
 			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
 			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
@@ -90,6 +95,7 @@ export default class Float extends Composy {
 		});
 
 		resizeBottomElement.addEventListener('mouseup', (e) => {
+			floatDiv.classList.remove('modifying');
 			window.removeEventListener('mousemove', resizeFloat);
 		});
 
@@ -147,6 +153,7 @@ export default class Float extends Composy {
 		const hostElement = this.shadowRoot.host;
 			if (this.#resizeTriggerElement.id === 'resize-right') {
 				hostElement.style.width = `${this.#currentDimensions.width + (e.clientX - this.#startingPosCursor.x)}px`;
+				this.shadowRoot.firstChild.style.width = `${this.#currentDimensions.width + (e.clientX - this.#startingPosCursor.x)}px`;
 			} else if (this.#resizeTriggerElement.id === 'resize-bottom') {
 				hostElement.style.height = `${this.#currentDimensions.height + (e.clientY - this.#startingPosCursor.y)}px`;
 				this.shadowRoot.firstChild.style.height = `${this.#currentDimensions.height + (e.clientY - this.#startingPosCursor.y)}px`;
