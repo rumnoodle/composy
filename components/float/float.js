@@ -2,6 +2,8 @@ import Composy from '../composy.js';
 
 // TODO:
 // * Should be possible to set width and height, also to resize if enabled
+// * Break the events out into traits (and figure out how to configure them correctly)
+// * automate the creation of dom map (e.g. by looping all dom elements and extracting the id's or just by adding the ones you want to use to an array, then you have the option to get them yourself as well
 //
 // * create socket trait to communicate with server
 // * create keypress trait to handle keypresses or add to events
@@ -11,6 +13,8 @@ import Composy from '../composy.js';
 export default class Float extends Composy {
 	#startingPosCursor;
 	#startingPosHost;
+	#currentDimensions;
+	#resizeTriggerElement;
 
 	constructor() {
 		super();
@@ -50,6 +54,43 @@ export default class Float extends Composy {
 
 		moveButton.addEventListener('mouseup', (e) => {
 			window.removeEventListener('mousemove', moveFloat);
+		});
+
+		// Resize element
+		const resizeRightElement = this.shadowRoot.getElementById('resize-right');
+
+		const resizeFloat = this.#resizeFloat.bind(this);
+
+		resizeRightElement.addEventListener('mousedown', (e) => {
+			this.#resizeTriggerElement = resizeRightElement;
+			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
+			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
+			this.#currentDimensions = {
+				height: targetBoundingRect.height,
+				width: targetBoundingRect.width
+			};
+			window.addEventListener('mousemove', resizeFloat);
+		});
+
+		resizeRightElement.addEventListener('mouseup', (e) => {
+			window.removeEventListener('mousemove', resizeFloat);
+		});
+
+		const resizeBottomElement = this.shadowRoot.getElementById('resize-bottom');
+
+		resizeBottomElement.addEventListener('mousedown', (e) => {
+			this.#resizeTriggerElement = resizeBottomElement;
+			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
+			this.#startingPosCursor = { x: e.clientX, y: e.clientY };
+			this.#currentDimensions = {
+				height: targetBoundingRect.height,
+				width: targetBoundingRect.width
+			};
+			window.addEventListener('mousemove', resizeFloat);
+		});
+
+		resizeBottomElement.addEventListener('mouseup', (e) => {
+			window.removeEventListener('mousemove', resizeFloat);
 		});
 
 		// Close element and remove it from the dom
@@ -100,6 +141,16 @@ export default class Float extends Composy {
 		const hostElement = this.shadowRoot.host;
 		hostElement.style.top = `${this.#startingPosHost.y + (e.clientY - this.#startingPosCursor.y)}px`;
 		hostElement.style.left = `${this.#startingPosHost.x + (e.clientX - this.#startingPosCursor.x)}px`;
+	}
+
+	#resizeFloat(e) {
+		const hostElement = this.shadowRoot.host;
+			if (this.#resizeTriggerElement.id === 'resize-right') {
+				hostElement.style.width = `${this.#currentDimensions.width + (e.clientX - this.#startingPosCursor.x)}px`;
+			} else if (this.#resizeTriggerElement.id === 'resize-bottom') {
+				hostElement.style.height = `${this.#currentDimensions.height + (e.clientY - this.#startingPosCursor.y)}px`;
+				this.shadowRoot.firstChild.style.height = `${this.#currentDimensions.height + (e.clientY - this.#startingPosCursor.y)}px`;
+			}
 	}
 
 	#findHighestZIndex() {
