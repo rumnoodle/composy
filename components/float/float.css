@@ -38,10 +38,10 @@
 #header {
 	background-color: #ffffff;
 	border: 1px solid grey;
-	border-radius: 12px;
+	border-radius: 8px;
 	left: 50%;
 	margin-top: 8px;
-	padding: 4px 8px;
+	padding: 4px 16px;
 	position: absolute;
 	transform: translate(-50%, 0);
 	white-space: nowrap;

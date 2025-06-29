@@ -40,11 +40,14 @@ export default class Float extends Composy {
 		});
 
 		// Move element when holding down move button
-		const moveButton = this.shadowRoot.getElementById('drag-and-drop');
+		const moveButton = this.shadowRoot.getElementById('header');
 		// We bind to a local variable to be able to remove listener
 		const moveFloat = this.#moveFloat.bind(this);
 
 		moveButton.addEventListener('mousedown', (e) => {
+			if (e.composedPath()[0] !== moveButton) {
+				return;
+			}
 			floatDiv.classList.add('modifying');
 			const targetBoundingRect = this.shadowRoot.host.getBoundingClientRect();
 			this.#startingPosHost = { x: targetBoundingRect.left, y: targetBoundingRect.top };
